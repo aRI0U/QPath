@@ -13,7 +13,7 @@ QPath::QPath(const QString &path)
       m_dir(QDir(path)),
       m_fileInfo(QFileInfo(path))
 {
-   m_parts = m_fileInfo.absoluteFilePath().split(m_sep, QString::SkipEmptyParts);
+    m_parts = m_fileInfo.absoluteFilePath().split(m_sep, QString::SkipEmptyParts);
 }
 
 
@@ -29,9 +29,9 @@ QString QPath::suffix() const {
     return m_fileInfo.suffix();
 }
 
-QPath QPath::parent(const uint index) const {
+QPath QPath::parent(const int index) const {
     if (index < m_parts.size() - 1) {
-        QStringList prefix();
+        QStringList prefix;
         for (int i = 0; i < m_parts.size() - 1 - index; ++i) {
             prefix.append(m_parts.at(i));
         }
@@ -66,14 +66,14 @@ bool QPath::match(const QString &pattern) const {
 }
 
 
-QPathList QPath::iter(QStringList &nameFilters, QPath::Filter filters, QPath::SortFlags sort) const {
-    paths = QPathList();
+QList<QPath> QPath::iter(QStringList &nameFilters, QPath::Filter filters, QPath::SortFlags sort) const {
+    QList<QPath> paths;
     if (!isDir()) {
         qDebug() << "QPath::iter():"
                  << *this << "is not a valid directory";
         return paths;
     }
-    for (QString &entry : m_dir.entryList(nameFilters, filters, sort))
+    for (QString &entry : m_dir.entryList(nameFilters, static_cast<QDir::Filter>(filters), static_cast<QDir::SortFlag>(sort)))
         paths.append(QPath(entry));
     return paths;
 }
@@ -83,8 +83,14 @@ QPath QPath::join(const QString &path) const {
     return QPath(m_dir.absoluteFilePath(path));
 }
 
+bool QPath::mkdir(const bool parents) const {
+    if (parents)
+        return m_dir.mkpath(".");
+    return m_dir.mkdir(".");
+}
 
-QPath QPath::operator/(const QString &path) {
+
+QPath QPath::operator/(const QString &path) const {
     return join(path);
 }
 

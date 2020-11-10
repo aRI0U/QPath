@@ -2,6 +2,8 @@
 #define QPATH_H
 
 #include <QDir>
+#include <QDebug>
+#include <QRegularExpression>
 #include <QStandardPaths>
 #include <QString>
 #include <QSysInfo>
@@ -9,8 +11,6 @@
 class QPath : public QString
 {
 public:
-    typedef QList<QPath> QPathList;
-
     enum Filter {
         Dirs = QDir::Dirs,
         AllDirs = QDir::AllDirs,
@@ -44,7 +44,7 @@ public:
     QString name() const;
     QString stem() const;
     QString suffix() const;
-    QPath parent(const uint index = 0) const;
+    QPath parent(const int index = 0) const;
 
     // information
     bool exists() const;
@@ -54,28 +54,29 @@ public:
     bool match(const QString &pattern) const;
     
     // navigation
-    QPathList iter(QStringList &nameFilters, Filter filters, SortFlags sort) const; // add filters
+    QList<QPath> iter(QStringList &nameFilters, Filter filters, SortFlags sort) const; // add filters
     
     // actions
     QPath join(const QString &path) const;
+    bool mkdir(const bool parents = true) const;
         
     // operators
     QPath operator/(const QString &path) const;
     
-static:
-    QPath cwd();
+    // static methods
+    static QPath cwd();
 
     // standard paths
     QPath home();
 
 private:
-    const QDir m_dir;
-    const QFileInfo m_fileInfo;
+    QDir m_dir;
+    QFileInfo m_fileInfo;
 
-    const QStringList m_parts;
+    QStringList m_parts;
 
-    const bool windows = QSysInfo::productType() == "windows";
-    const QString m_sep = windows ? "\\" : "/";
+    bool windows = QSysInfo::productType() == "windows";
+    QString m_sep = windows ? "\\" : "/";
 };
 
 #endif // QPATH_H
