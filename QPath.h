@@ -36,6 +36,7 @@ public:
         IgnoreCase = QDir::IgnoreCase,
         LocaleAware = QDir::LocaleAware
     };
+
     
     QPath();
     QPath(const QString &other);
@@ -54,7 +55,7 @@ public:
     bool match(const QString &pattern) const;
     
     // navigation
-    QList<QPath> iter(QStringList &nameFilters, Filter filters, SortFlags sort) const; // add filters
+    QList<QPath> iter(QStringList &nameFilters, Filter filters = AllEntries, SortFlags sort = NoSort) const; // add filters
     
     // actions
     QPath join(const QString &path) const;
@@ -78,5 +79,9 @@ private:
     bool windows = QSysInfo::productType() == "windows";
     QString m_sep = windows ? "\\" : "/";
 };
+
+inline QPath::Filter operator|(QPath::Filter a, QPath::Filter b) {
+    return static_cast<QPath::Filter>(static_cast<int>(a) | static_cast<int>(b));
+}
 
 #endif // QPATH_H
