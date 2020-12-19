@@ -89,6 +89,12 @@ bool QPath::mkdir(const bool parents) const {
     return m_dir.mkdir(".");
 }
 
+QPath QPath::valid() {
+    if (QSysInfo::productType() == "windows")  // invalid characters: <>:"/\|?*
+        return this->replace('<', "[").replace('>', "]").replace(':', "-").replace('"', "'").replace('|', "-").replace('?', "_").replace('*', "_");
+    return *this;
+}
+
 
 QPath QPath::operator/(const QString &path) const {
     return join(path);
@@ -98,6 +104,7 @@ QPath QPath::operator/(const QString &path) const {
 QPath QPath::cwd() {
     return QPath(QDir::currentPath());
 }
+
 
 QPath QPath::home() {
     return QPath(QStandardPaths::displayName(QStandardPaths::HomeLocation));

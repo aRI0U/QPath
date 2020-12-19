@@ -60,6 +60,7 @@ public:
     // actions
     QPath join(const QString &path) const;
     bool mkdir(const bool parents = true) const;
+    QPath valid();
         
     // operators
     QPath operator/(const QString &path) const;
@@ -68,7 +69,7 @@ public:
     static QPath cwd();
 
     // standard paths
-    QPath home();
+    static QPath home();
 
 private:
     QDir m_dir;
